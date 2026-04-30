@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { io } from 'socket.io-client';
 import { setTasks, addTask, updateTask, removeTask } from '../../store/tasksSlice.js';
 import { setInsights } from '../../store/insightsSlice.js';
+import { getApiUrl } from '../../lib/api.js';
 
 let socket = null;
 
@@ -21,11 +22,16 @@ export default function SocketProvider({ children }) {
       return;
     }
 
-    socket = io('/', {
+    if (socket?.connected) return;
+
+    // In production, we need the actual backend origin (e.g. https://backend.render.com)
+    // In development, the proxy handles '/'
+    const socketOrigin = import.meta.env.VITE_API_URL || '/';
+
+    socket = io(socketOrigin, {
       reconnectionDelay: 1000,
       reconnection: true,
       reconnectionAttempts: 10,
-      transports: ['websocket'],
       auth: { token },
     });
 

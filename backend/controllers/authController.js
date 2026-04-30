@@ -1,11 +1,13 @@
 import { User } from '../models/User.js';
 import { signToken } from '../lib/jwt.js';
+import { logger } from '../config/logger.js';
 
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export async function register(req, res) {
   try {
     const { name, email, password } = req.body;
+    logger.info({ name, email }, 'Registration attempt');
 
     // Validation
     if (!name || name.trim().length < 2) {
@@ -38,6 +40,8 @@ export async function register(req, res) {
       email: user.email,
     });
 
+    logger.info({ userId: user._id }, 'Registration successful');
+
     res.status(201).json({
       token,
       user: {
@@ -48,6 +52,7 @@ export async function register(req, res) {
       },
     });
   } catch (error) {
+    logger.error({ err: error, body: req.body }, 'Registration error');
     res.status(500).json({ message: 'Registration failed', error: error.message });
   }
 }

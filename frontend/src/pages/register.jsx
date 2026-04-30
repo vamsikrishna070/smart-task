@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button.jsx';
 import { Input } from '../components/ui/input.jsx';
 import { Card } from '../components/ui/card.jsx';
 import { Zap, ShieldCheck, Rocket, LayoutDashboard, AlertTriangle, Eye, EyeOff, UserPlus, CheckCircle2 } from 'lucide-react';
+import { getApiUrl } from '../lib/api.js';
 
 export default function Register() {
   const [, setLocation] = useLocation();
@@ -36,7 +37,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(getApiUrl('/api/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

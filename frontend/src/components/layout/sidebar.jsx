@@ -8,70 +8,81 @@ export default function Sidebar() {
   const isActive = (path) => pathname === path || pathname.startsWith(path + '/');
 
   return (
-    <aside className="w-72 glass-dark text-slate-300 flex flex-col border-r border-white/5 relative z-40">
-      <div className="p-8 mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-900/20">
-            <LayoutDashboard className="text-white" size={22} />
+    <aside className="w-80 glass-dark text-slate-300 flex flex-col border-r border-white/5 relative z-40">
+      <div className="p-10 mb-6">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="w-12 h-12 rounded-[1.25rem] bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-900/40 relative z-10">
+              <LayoutDashboard className="text-white" size={24} />
+            </div>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-4 border-slate-900 z-20 animate-pulse" />
           </div>
-          <h2 className="text-xl font-black text-white tracking-tight">TaskFlow</h2>
+          <div>
+            <h2 className="text-2xl font-black text-white tracking-tighter leading-none">TaskFlow</h2>
+            <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mt-1">Command Center</p>
+          </div>
         </div>
       </div>
 
-      <nav className="flex-1 px-4 space-y-2">
-        <div className="px-4 mb-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-          Main Menu
+      <nav className="flex-1 px-6 space-y-3">
+        <div className="px-4 mb-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
+          Strategy
         </div>
         
-        <Link href="/dashboard">
-          <a
-            className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group ${
-              isActive('/dashboard')
-                ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20'
-                : 'hover:bg-white/5 hover:text-white'
-            }`}
-          >
-            <LayoutDashboard size={22} className={isActive('/dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-blue-400'} />
-            <span className="font-bold">Dashboard</span>
-          </a>
+        <Link 
+          href="/dashboard"
+          className={`flex items-center gap-4 px-6 py-4.5 rounded-[1.25rem] transition-all duration-500 group relative overflow-hidden ${
+            isActive('/dashboard')
+              ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/20'
+              : 'hover:bg-white/5 hover:text-white'
+          }`}
+        >
+          <LayoutDashboard size={20} className={isActive('/dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-blue-400 transition-colors'} />
+          <span className="font-black text-sm uppercase tracking-widest">Analytics Pulse</span>
+          {isActive('/dashboard') && (
+            <div className="absolute right-4 w-1.5 h-1.5 bg-white rounded-full" />
+          )}
         </Link>
 
-        <Link href="/tasks">
-          <a
-            className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group ${
-              isActive('/tasks')
-                ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20'
-                : 'hover:bg-white/5 hover:text-white'
-            }`}
-          >
-            <ListTodo size={22} className={isActive('/tasks') ? 'text-white' : 'text-slate-500 group-hover:text-blue-400'} />
-            <span className="font-bold">Tasks</span>
-          </a>
+        <Link 
+          href="/tasks"
+          className={`flex items-center gap-4 px-6 py-4.5 rounded-[1.25rem] transition-all duration-500 group relative overflow-hidden ${
+            isActive('/tasks')
+              ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/20'
+              : 'hover:bg-white/5 hover:text-white'
+          }`}
+        >
+          <ListTodo size={20} className={isActive('/tasks') ? 'text-white' : 'text-slate-500 group-hover:text-blue-400 transition-colors'} />
+          <span className="font-black text-sm uppercase tracking-widest">Active Missions</span>
+          {isActive('/tasks') && (
+            <div className="absolute right-4 w-1.5 h-1.5 bg-white rounded-full" />
+          )}
         </Link>
 
-        <div className="px-4 mt-10 mb-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-          Actions
+        <div className="px-4 mt-12 mb-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
+          Deployment
         </div>
 
-        <Link href="/tasks/new">
-          <a className="flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-white/5 hover:text-white transition-all duration-300 group">
-            <div className="w-6 h-6 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20">
-              <Plus size={18} className="text-blue-400" />
-            </div>
-            <span className="font-bold">Create New</span>
-          </a>
+        <Link 
+          href="/tasks/new"
+          className="flex items-center gap-4 px-6 py-4.5 rounded-[1.25rem] hover:bg-white/5 hover:text-white transition-all duration-500 group border border-white/5 hover:border-white/10"
+        >
+          <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+            <Plus size={20} className="text-blue-400 group-hover:rotate-90 transition-transform duration-500" />
+          </div>
+          <span className="font-black text-sm uppercase tracking-widest">New Operation</span>
         </Link>
       </nav>
 
-      <div className="p-6 mt-auto">
-        <div className="p-5 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform">
-            <TrendingUp size={60} />
+      <div className="p-8 mt-auto">
+        <div className="p-6 rounded-[2rem] bg-gradient-to-br from-blue-600 to-indigo-800 text-white relative overflow-hidden group shadow-2xl shadow-blue-900/20">
+          <div className="absolute -top-6 -right-6 p-4 opacity-10 group-hover:scale-125 group-hover:rotate-12 transition-all duration-1000">
+            <TrendingUp size={100} />
           </div>
-          <p className="text-xs font-bold opacity-80 mb-1">PRO PLAN</p>
-          <p className="font-black text-lg mb-4">Unlimited Tasks</p>
-          <button className="w-full py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold backdrop-blur-sm transition-all">
-            Upgrade Now
+          <p className="text-[10px] font-black opacity-60 mb-2 uppercase tracking-[0.2em]">Tier Status</p>
+          <p className="font-black text-xl mb-6 leading-tight">Unlimited <br/>Strategic Operations</p>
+          <button className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[10px] font-black uppercase tracking-widest backdrop-blur-md transition-all border border-white/10">
+            Maximize Reach
           </button>
         </div>
       </div>

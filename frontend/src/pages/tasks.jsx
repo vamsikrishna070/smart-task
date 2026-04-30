@@ -5,6 +5,7 @@ import { setTasks, removeTask, updateTask } from '../store/tasksSlice.js';
 import { Card } from '../components/ui/card.jsx';
 import { Button } from '../components/ui/button.jsx';
 import { Trash2, Edit2, CheckCircle, Circle, Clock, Tag, Flag, AlertTriangle, Calendar, Plus } from 'lucide-react';
+import { getApiUrl } from '../lib/api.js';
 
 export default function Tasks() {
   const [, setLocation] = useLocation();
@@ -20,7 +21,7 @@ export default function Tasks() {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch('/api/tasks', {
+      const response = await fetch(getApiUrl('/api/tasks'), {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
@@ -36,7 +37,7 @@ export default function Tasks() {
 
   const handleDelete = async (taskId) => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, {
+      const response = await fetch(getApiUrl(`/api/tasks/${taskId}`), {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -51,7 +52,7 @@ export default function Tasks() {
   const handleToggleStatus = async (task) => {
     const newStatus = task.status === 'Completed' ? 'Pending' : 'Completed';
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await fetch(getApiUrl(`/api/tasks/${task.id}`), {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -82,43 +83,50 @@ export default function Tasks() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="w-16 h-16 bg-slate-200 rounded-full" />
-          <div className="h-4 w-32 bg-slate-200 rounded-full" />
+      <div className="flex items-center justify-center h-[70vh]">
+        <div className="animate-pulse flex flex-col items-center gap-6">
+          <div className="w-20 h-20 bg-slate-100 rounded-3xl" />
+          <div className="h-4 w-40 bg-slate-100 rounded-full" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div>
-          <h1 className="text-5xl font-black tracking-tighter mb-2">
-            <span className="text-gradient">My Workflow</span>
+    <div className="space-y-12 pb-12">
+      {/* Dynamic Header Section */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 animate-enter">
+        <div className="space-y-2">
+          <div className="px-3 py-1 bg-slate-900 text-white inline-block rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+            Operations
+          </div>
+          <h1 className="text-6xl font-black tracking-tight text-slate-900 leading-none">
+            Strategic <br/>
+            <span className="text-blue-600">Workflow.</span>
           </h1>
-          <p className="text-slate-500 font-medium text-lg">Organize your day with precision</p>
+          <p className="text-lg text-slate-500 font-medium">Manage your execution with high-fidelity tracking.</p>
         </div>
-        <Button
-          onClick={() => setLocation('/tasks/new')}
-          className="bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/20 py-7 px-10 rounded-3xl text-lg font-bold transition-all hover:scale-105 active:scale-95 group"
-        >
-          <Plus className="mr-2 group-hover:rotate-90 transition-transform" />
-          New Mission
-        </Button>
+        
+        <div className="flex items-center gap-4">
+           <Button
+            onClick={() => setLocation('/tasks/new')}
+            className="bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/20 py-8 px-12 rounded-[2rem] text-xl font-black transition-all hover:scale-[1.02] active:scale-[0.98] group flex items-center gap-3"
+          >
+            <Plus size={24} className="group-hover:rotate-90 transition-transform duration-500" />
+            New Mission
+          </Button>
+        </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 items-start">
-        {/* Filters */}
-        <Card className="glass p-2 border-none inline-flex flex-col md:flex-row gap-2">
+      <div className="flex flex-col md:flex-row gap-6 items-center animate-enter stagger-1">
+        <Card className="glass p-2 border-none inline-flex flex-wrap gap-2 rounded-3xl">
           {['all', 'pending', 'in progress', 'completed'].map((status) => (
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`px-8 py-3.5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${
+              className={`px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${
                 filter === status
-                  ? 'bg-white text-blue-600 shadow-md scale-105'
+                  ? 'bg-slate-900 text-white shadow-xl scale-105'
                   : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'
               }`}
             >
@@ -126,57 +134,69 @@ export default function Tasks() {
             </button>
           ))}
         </Card>
+        
+        <div className="h-6 w-[1px] bg-slate-200 hidden md:block" />
+        
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+           Showing <span className="text-slate-900">{filteredTasks.length} missions</span>
+        </p>
       </div>
 
       {filteredTasks.length === 0 ? (
-        <Card className="glass p-32 text-center border-none">
-          <div className="max-w-md mx-auto space-y-6">
-            <div className="w-24 h-24 bg-slate-100 rounded-3xl flex items-center justify-center mx-auto text-slate-300 animate-float">
-              <Calendar size={48} />
+        <Card className="glass p-32 text-center border-none rounded-[3rem] animate-enter stagger-2">
+          <div className="max-w-md mx-auto space-y-8">
+            <div className="w-28 h-28 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto text-slate-200 animate-float border border-slate-100">
+              <Calendar size={56} />
             </div>
-            <h3 className="text-3xl font-black text-slate-900">All Clear!</h3>
-            <p className="text-slate-500 text-lg">No tasks found for this filter. Time to dream big or enjoy the quiet.</p>
-            <Button onClick={() => setLocation('/tasks/new')} variant="outline" className="mt-8 py-6 px-10 rounded-2xl font-bold border-2">
-              Begin New Task
+            <div>
+              <h3 className="text-3xl font-black text-slate-900 mb-2">Workspace Clear</h3>
+              <p className="text-slate-500 text-lg font-medium leading-relaxed">No tasks matching this protocol. Deploy a new mission to begin tracking.</p>
+            </div>
+            <Button onClick={() => setLocation('/tasks/new')} variant="outline" className="py-7 px-12 rounded-2xl font-black uppercase tracking-widest border-2 hover:bg-slate-50">
+              Initialize Mission
             </Button>
           </div>
         </Card>
       ) : (
-        <div className="grid gap-6">
-          {filteredTasks.map((task) => {
+        <div className="grid gap-8">
+          {filteredTasks.map((task, idx) => {
             const p = getPriorityInfo(task.priorityScore);
             return (
               <Card
                 key={task.id}
-                className={`glass p-8 border-none group relative overflow-hidden transition-all duration-500 hover:bg-white/90 ${
-                  task.status === 'Completed' ? 'opacity-60 grayscale-[0.5]' : ''
+                className={`glass p-10 border-none group relative overflow-hidden transition-all duration-700 hover-lift animate-enter stagger-${(idx % 4) + 1} ${
+                  task.status === 'Completed' ? 'opacity-60 saturate-50' : ''
                 }`}
               >
-                {/* Priority Indicator Line */}
-                <div className={`absolute top-0 left-0 w-2 h-full bg-${p.color}-500`} />
+                {/* Priority Visual Sidebar */}
+                <div className={`absolute top-0 left-0 w-2.5 h-full bg-${p.color}-500 transition-all duration-500 group-hover:w-3`} />
                 
                 {task.priorityScore >= 95 && task.status !== 'Completed' && (
-                  <div className="absolute top-0 right-0 px-6 py-2 bg-rose-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-bl-3xl shadow-xl z-10 animate-pulse">
-                    Immediate Action
+                  <div className="absolute top-0 right-0 px-8 py-3 bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-bl-[2rem] shadow-2xl z-10 animate-pulse">
+                    Critical Priority
                   </div>
                 )}
                 
-                <div className="flex flex-col md:flex-row items-start gap-8">
+                <div className="flex flex-col lg:flex-row items-start gap-10 relative z-10">
                   <button
                     onClick={() => handleToggleStatus(task)}
-                    className="mt-2 transition-all hover:scale-125 active:scale-90"
+                    className="mt-1 transition-all hover:scale-110 active:scale-90 group/check flex-shrink-0"
                   >
                     {task.status === 'Completed' ? (
-                      <CheckCircle size={40} className="text-emerald-500 fill-emerald-50" />
+                      <div className="w-14 h-14 rounded-3xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                        <CheckCircle size={32} />
+                      </div>
                     ) : (
-                      <div className="w-10 h-10 rounded-2xl border-4 border-slate-200 hover:border-blue-500 transition-colors" />
+                      <div className="w-14 h-14 rounded-3xl border-4 border-slate-100 bg-white hover:border-blue-500 transition-all shadow-sm group-hover/check:shadow-md flex items-center justify-center">
+                        <Circle size={32} className="text-slate-100 group-hover/check:text-blue-100 transition-colors" />
+                      </div>
                     )}
                   </button>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
                       <h3
-                        className={`text-2xl font-black tracking-tight truncate ${
+                        className={`text-3xl font-black tracking-tight truncate leading-tight ${
                           task.status === 'Completed'
                             ? 'line-through text-slate-400'
                             : 'text-slate-900'
@@ -184,7 +204,7 @@ export default function Tasks() {
                       >
                         {task.title}
                       </h3>
-                      <div className={`flex items-center gap-2 px-4 py-1.5 rounded-xl bg-${p.color}-50 text-${p.color}-600 border border-${p.color}-100`}>
+                      <div className={`flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-${p.color}-50 text-${p.color}-600 border border-${p.color}-100/50 shadow-sm`}>
                         <p.icon size={14} />
                         <span className="text-[10px] font-black uppercase tracking-widest">
                           {p.label} • {task.priorityScore.toFixed(0)}
@@ -192,40 +212,40 @@ export default function Tasks() {
                       </div>
                     </div>
                     
-                    <p className={`text-slate-500 text-lg line-clamp-2 mb-6 leading-relaxed ${task.status === 'Completed' ? 'line-through' : ''}`}>
-                      {task.description || 'Elevate this task by adding a detailed description of your goals.'}
+                    <p className={`text-slate-500 text-xl font-medium line-clamp-2 mb-8 leading-relaxed max-w-4xl ${task.status === 'Completed' ? 'line-through opacity-60' : ''}`}>
+                      {task.description || 'No strategic overview provided for this mission objective.'}
                     </p>
 
-                    <div className="flex items-center gap-6 flex-wrap">
-                      <div className="flex items-center gap-2.5 px-5 py-2 bg-slate-100 text-slate-600 rounded-2xl text-xs font-black uppercase tracking-widest">
+                    <div className="flex items-center gap-8 flex-wrap">
+                      <div className="flex items-center gap-3 px-6 py-2.5 bg-slate-50 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border border-slate-100/50">
                         <Tag size={14} />
                         {task.category}
                       </div>
                       
-                      <div className={`flex items-center gap-2.5 text-sm font-bold ${task.isOverdue && task.status !== 'Completed' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        <Clock size={18} />
-                        {task.deadline ? new Date(task.deadline).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : 'No Deadline Set'}
+                      <div className={`flex items-center gap-3 text-sm font-black uppercase tracking-widest ${task.isOverdue && task.status !== 'Completed' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        <Calendar size={18} />
+                        {task.deadline ? new Date(task.deadline).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Open Schedule'}
                         {task.isOverdue && task.status !== 'Completed' && (
-                          <span className="bg-rose-100 text-rose-600 px-3 py-1 rounded-lg text-[10px] uppercase font-black ml-2 shadow-sm">Overdue</span>
+                          <span className="bg-rose-600 text-white px-4 py-1.5 rounded-full text-[9px] font-black ml-3 shadow-lg shadow-rose-600/20">Overdue</span>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-row md:flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                  <div className="flex flex-row lg:flex-col gap-3 opacity-0 lg:group-hover:opacity-100 transition-all duration-500 transform lg:translate-x-6 lg:group-hover:translate-x-0">
                     <button
                       onClick={() => setLocation(`/tasks/${task.id}/edit`)}
-                      className="p-4 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-2xl transition-all shadow-sm"
-                      title="Edit Goal"
+                      className="p-5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-[1.5rem] transition-all shadow-sm hover:shadow-blue-500/20 active:scale-95"
+                      title="Refine Objective"
                     >
-                      <Edit2 size={24} />
+                      <Edit2 size={26} />
                     </button>
                     <button
                       onClick={() => handleDelete(task.id)}
-                      className="p-4 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-2xl transition-all shadow-sm"
-                      title="Delete Goal"
+                      className="p-5 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-[1.5rem] transition-all shadow-sm hover:shadow-rose-500/20 active:scale-95"
+                      title="Terminate Mission"
                     >
-                      <Trash2 size={24} />
+                      <Trash2 size={26} />
                     </button>
                   </div>
                 </div>
