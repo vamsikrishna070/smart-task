@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { io } from 'socket.io-client';
 import { setTasks, addTask, updateTask, removeTask } from '../../store/tasksSlice.js';
+import { setInsights } from '../../store/insightsSlice.js';
 
 let socket = null;
 
