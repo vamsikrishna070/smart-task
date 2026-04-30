@@ -30,61 +30,48 @@ function ProtectedRoute({ component: Component }) {
   return <Component />;
 }
 
+function RootRedirect() {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  if (isAuthenticated) {
+    return <Redirect to="/dashboard" />;
+  }
+  return <Redirect to="/login" />;
+}
+
+const DashboardPage = () => (
+  <AppLayout>
+    <Dashboard />
+  </AppLayout>
+);
+
+const TasksPage = () => (
+  <AppLayout>
+    <Tasks />
+  </AppLayout>
+);
+
+const TaskFormPage = () => (
+  <AppLayout>
+    <TaskForm />
+  </AppLayout>
+);
+
+const ProtectedDashboard = () => <ProtectedRoute component={DashboardPage} />;
+const ProtectedTasks = () => <ProtectedRoute component={TasksPage} />;
+const ProtectedTaskForm = () => <ProtectedRoute component={TaskFormPage} />;
+
 function AppRoutes() {
   return (
     <Router>
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       
-      <Route path="/dashboard">
-        {() => (
-          <ProtectedRoute component={() => (
-            <AppLayout>
-              <Dashboard />
-            </AppLayout>
-          )} />
-        )}
-      </Route>
+      <Route path="/dashboard" component={ProtectedDashboard} />
+      <Route path="/tasks" component={ProtectedTasks} />
+      <Route path="/tasks/new" component={ProtectedTaskForm} />
+      <Route path="/tasks/:id/edit" component={ProtectedTaskForm} />
 
-      <Route path="/tasks">
-        {() => (
-          <ProtectedRoute component={() => (
-            <AppLayout>
-              <Tasks />
-            </AppLayout>
-          )} />
-        )}
-      </Route>
-
-      <Route path="/tasks/new">
-        {() => (
-          <ProtectedRoute component={() => (
-            <AppLayout>
-              <TaskForm />
-            </AppLayout>
-          )} />
-        )}
-      </Route>
-
-      <Route path="/tasks/:id/edit">
-        {({ id }) => (
-          <ProtectedRoute component={() => (
-            <AppLayout>
-              <TaskForm />
-            </AppLayout>
-          )} />
-        )}
-      </Route>
-
-      <Route path="/">
-        {() => {
-          const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-          if (isAuthenticated) {
-            return <Redirect to="/dashboard" />;
-          }
-          return <Redirect to="/login" />;
-        }}
-      </Route>
+      <Route path="/" component={RootRedirect} />
 
       <Route component={NotFound} />
     </Router>
