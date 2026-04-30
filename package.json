@@ -1,0 +1,21 @@
+{
+  "name": "taskflow-mern",
+  "version": "1.0.0",
+  "description": "Full-stack MERN Productivity Management System with Real-time Updates",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "start": "npm start -w backend",
+    "start:client": "npm run dev -w frontend",
+    "start:server": "npm run dev -w backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

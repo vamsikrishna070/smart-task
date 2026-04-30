@@ -1,0 +1,41 @@
+import express from 'express';
+import cors from 'cors';
+import pinoHttp from 'pino-http';
+import router from './routes/index.js';
+import { logger } from './config/logger.js';
+
+const app = express();
+
+app.use(
+  pinoHttp({
+    logger,
+    serializers: {
+      req(req) {
+        return {
+          id: req.id,
+          method: req.method,
+          url: req.url?.split('?')[0],
+        };
+      },
+      res(res) {
+        return {
+          statusCode: res.statusCode,
+        };
+      },
+    },
+  })
+);
+
+app.use(
+  cors({
+    origin: '*',
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api', router);
+
+export default app;
