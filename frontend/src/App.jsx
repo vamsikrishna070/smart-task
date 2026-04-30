@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Router, Route, Redirect } from 'wouter';
+import { Router, Route, Redirect, Switch } from 'wouter';
 import { useSelector, useDispatch } from 'react-redux';
 import { Provider } from 'react-redux';
 import { setCredentials } from './store/authSlice.js';
@@ -63,17 +63,19 @@ const ProtectedTaskForm = () => <ProtectedRoute component={TaskFormPage} />;
 function AppRoutes() {
   return (
     <Router>
-      <Route path="/login" component={Login} />
-      <Route path="/register" component={Register} />
-      
-      <Route path="/dashboard" component={ProtectedDashboard} />
-      <Route path="/tasks" component={ProtectedTasks} />
-      <Route path="/tasks/new" component={ProtectedTaskForm} />
-      <Route path="/tasks/:id/edit" component={ProtectedTaskForm} />
+      <Switch>
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+        
+        <Route path="/dashboard" component={ProtectedDashboard} />
+        <Route path="/tasks" component={ProtectedTasks} />
+        <Route path="/tasks/new" component={ProtectedTaskForm} />
+        <Route path="/tasks/:id/edit" component={ProtectedTaskForm} />
 
-      <Route path="/" component={RootRedirect} />
+        <Route path="/" component={RootRedirect} />
 
-      <Route component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
     </Router>
   );
 }

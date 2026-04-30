@@ -5,6 +5,7 @@ import { addTask, updateTask } from '../store/tasksSlice.js';
 import { Button } from '../components/ui/button.jsx';
 import { Input } from '../components/ui/input.jsx';
 import { Card } from '../components/ui/card.jsx';
+import { ChevronLeft, Target, Calendar, Tag, Activity, FileText } from 'lucide-react';
 
 export default function TaskForm() {
   const [, setLocation] = useLocation();
@@ -48,12 +49,12 @@ export default function TaskForm() {
     setError('');
 
     if (!form.title.trim()) {
-      setError('Title is required');
+      setError('A title is required to define your mission.');
       return;
     }
 
     if (!form.deadline) {
-      setError('Deadline is required');
+      setError('Every mission needs a deadline.');
       return;
     }
 
@@ -63,43 +64,29 @@ export default function TaskForm() {
       const deadline = new Date(form.deadline).toISOString();
 
       if (id && id !== 'new') {
-        // Update task
         const response = await fetch(`/api/tasks/${id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            ...form,
-            deadline,
-          }),
+          body: JSON.stringify({ ...form, deadline }),
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to update task');
-        }
-
+        if (!response.ok) throw new Error('Failed to update task');
         const updatedTask = await response.json();
         dispatch(updateTask(updatedTask));
       } else {
-        // Create new task
         const response = await fetch('/api/tasks', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            ...form,
-            deadline,
-          }),
+          body: JSON.stringify({ ...form, deadline }),
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to create task');
-        }
-
+        if (!response.ok) throw new Error('Failed to create task');
         const newTask = await response.json();
         dispatch(addTask(newTask));
       }
@@ -113,127 +100,138 @@ export default function TaskForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto animate-in slide-up duration-500">
-      <div className="mb-8">
-        <h1 className="text-4xl font-extrabold tracking-tight">
+    <div className="max-w-3xl mx-auto animate-in slide-in-from-bottom-8 duration-1000 pb-20">
+      <button 
+        onClick={() => setLocation('/tasks')}
+        className="flex items-center gap-2 text-slate-400 hover:text-blue-600 font-bold transition-colors mb-10 group"
+      >
+        <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+        Back to Workflow
+      </button>
+
+      <div className="mb-12">
+        <h1 className="text-6xl font-black tracking-tighter mb-4">
           <span className="text-gradient">
-            {id && id !== 'new' ? 'Edit Task' : 'Create New Task'}
+            {id && id !== 'new' ? 'Refine Mission' : 'New Mission'}
           </span>
         </h1>
-        <p className="text-slate-500 font-medium mt-2">
+        <p className="text-slate-500 font-medium text-xl">
           {id && id !== 'new'
-            ? 'Refine your task details for better clarity.'
-            : 'Define your next achievement and stay productive.'}
+            ? 'Adjust your strategy for peak performance.'
+            : 'Initiate a new objective and track its execution.'}
         </p>
       </div>
 
-      <Card className="glass p-8 border-none">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <Card className="glass p-12 border-none shadow-2xl shadow-blue-500/5">
+        <form onSubmit={handleSubmit} className="space-y-10">
           {error && (
-            <div className="p-4 bg-rose-50 border border-rose-100 text-rose-700 rounded-2xl text-sm font-medium animate-shake">
+            <div className="p-5 bg-rose-50 border border-rose-100 text-rose-700 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center gap-3 animate-in zoom-in">
+              <Activity size={18} />
               {error}
             </div>
           )}
 
-          <div className="space-y-2">
-            <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
-              Title
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+              <Target size={14} />
+              Objective Title
             </label>
             <Input
               type="text"
               name="title"
               value={form.title}
               onChange={handleChange}
-              placeholder="What needs to be done?"
-              className="py-6 px-4 rounded-xl border-slate-200 focus:ring-blue-500 text-lg"
+              placeholder="e.g. Design the Next Generation Interface"
+              className="py-8 px-6 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all text-xl font-bold placeholder:text-slate-300"
               required
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
-              Description
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+              <FileText size={14} />
+              Mission Context
             </label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
-              placeholder="Add more context to this task..."
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-              rows="4"
+              placeholder="Provide a strategic breakdown of this objective..."
+              className="w-full px-6 py-5 border border-slate-100 bg-slate-50/50 focus:bg-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-lg font-medium min-h-[150px] placeholder:text-slate-300"
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
-                Category
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="space-y-4">
+              <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+                <Tag size={14} />
+                Strategic Category
               </label>
               <select
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white font-medium"
+                className="w-full px-6 py-5 border border-slate-100 bg-slate-50/50 focus:bg-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-lg cursor-pointer"
               >
-                <option value="Work">Work</option>
-                <option value="Personal">Personal</option>
-                <option value="Shopping">Shopping</option>
-                <option value="Health">Health</option>
-                <option value="Other">Other</option>
+                <option value="Work">Professional Mission</option>
+                <option value="Personal">Personal Growth</option>
+                <option value="Shopping">Acquisitions</option>
+                <option value="Health">Vitality & Health</option>
+                <option value="Other">Special Projects</option>
               </select>
             </div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
-                Status
+            <div className="space-y-4">
+              <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+                <Activity size={14} />
+                Execution Status
               </label>
               <select
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white font-medium"
+                className="w-full px-6 py-5 border border-slate-100 bg-slate-50/50 focus:bg-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-lg cursor-pointer"
               >
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
+                <option value="Pending">Planned</option>
+                <option value="In Progress">Executing</option>
+                <option value="Completed">Mission Success</option>
               </select>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
-              Deadline
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+              <Calendar size={14} />
+              Mission Deadline
             </label>
             <Input
               type="date"
               name="deadline"
               value={form.deadline}
               onChange={handleChange}
-              className="py-6 px-4 rounded-xl border-slate-200 focus:ring-blue-500"
+              className="py-8 px-6 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all text-lg font-bold"
               required
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row gap-6 pt-6">
             <Button
               type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700 py-7 rounded-2xl text-lg font-bold shadow-lg shadow-blue-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-[2] bg-blue-600 hover:bg-blue-700 py-8 rounded-3xl text-xl font-black shadow-2xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
               disabled={loading}
             >
               {loading
-                ? id && id !== 'new'
-                  ? 'Updating...'
-                  : 'Creating...'
+                ? 'Processing Mission...'
                 : id && id !== 'new'
-                  ? 'Update Task'
-                  : 'Create Task'}
+                  ? 'Confirm Mission Re-alignment'
+                  : 'Initiate Strategic Mission'}
             </Button>
             <Button
               type="button"
               onClick={() => setLocation('/tasks')}
-              className="flex-1 bg-slate-100 text-slate-600 hover:bg-slate-200 py-7 rounded-2xl text-lg font-bold transition-all"
+              className="flex-1 bg-white text-slate-500 hover:bg-slate-50 border border-slate-100 py-8 rounded-3xl text-xl font-bold transition-all shadow-sm"
             >
-              Cancel
+              Abort
             </Button>
           </div>
         </form>

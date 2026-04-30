@@ -31,10 +31,15 @@ export async function getAllTasks(req, res) {
     if (status) filter.status = status;
     if (category) filter.category = category;
 
-    const rawTasks = await Task.find(filter).sort({ createdAt: 1 });
+    const rawTasks = await Task.find(filter).sort({ createdAt: -1 });
     const tasks = rawTasks
       .map(formatTask)
-      .sort((a, b) => b.priorityScore - a.priorityScore);
+      .sort((a, b) => {
+        if (b.priorityScore !== a.priorityScore) {
+          return b.priorityScore - a.priorityScore;
+        }
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
 
     const total = tasks.length;
     const pending = tasks.filter((t) => t.status === 'Pending').length;

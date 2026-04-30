@@ -4,7 +4,7 @@ import { useLocation } from 'wouter';
 import { setTasks, removeTask, updateTask } from '../store/tasksSlice.js';
 import { Card } from '../components/ui/card.jsx';
 import { Button } from '../components/ui/button.jsx';
-import { Trash2, Edit2, CheckCircle, Circle } from 'lucide-react';
+import { Trash2, Edit2, CheckCircle, Circle, Clock, Tag, Flag, AlertTriangle, Calendar, Plus } from 'lucide-react';
 
 export default function Tasks() {
   const [, setLocation] = useLocation();
@@ -16,7 +16,6 @@ export default function Tasks() {
 
   useEffect(() => {
     fetchTasks();
-    // No polling interval needed thanks to Socket.io
   }, []);
 
   const fetchTasks = async () => {
@@ -74,100 +73,110 @@ export default function Tasks() {
       ? tasks
       : tasks.filter((task) => task.status.toLowerCase() === filter.toLowerCase());
 
-  const getPriorityStyles = (priority) => {
-    if (priority >= 95) return 'bg-rose-50 text-rose-700 border-rose-200';
-    if (priority >= 85) return 'bg-orange-50 text-orange-700 border-orange-200';
-    if (priority >= 70) return 'bg-amber-50 text-amber-700 border-amber-200';
-    return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+  const getPriorityInfo = (score) => {
+    if (score >= 95) return { label: 'CRITICAL', color: 'rose', icon: AlertTriangle };
+    if (score >= 85) return { label: 'HIGH', color: 'orange', icon: Flag };
+    if (score >= 70) return { label: 'MEDIUM', color: 'amber', icon: Clock };
+    return { label: 'LOW', color: 'emerald', icon: Tag };
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-pulse flex flex-col items-center gap-4">
+          <div className="w-16 h-16 bg-slate-200 rounded-full" />
+          <div className="h-4 w-32 bg-slate-200 rounded-full" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-10 animate-in fade-in duration-700">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight">
-            <span className="text-gradient">Tasks</span>
+          <h1 className="text-5xl font-black tracking-tighter mb-2">
+            <span className="text-gradient">My Workflow</span>
           </h1>
-          <p className="text-slate-500 font-medium">Manage and prioritize your workflow</p>
+          <p className="text-slate-500 font-medium text-lg">Organize your day with precision</p>
         </div>
         <Button
           onClick={() => setLocation('/tasks/new')}
-          className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 py-6 px-8 rounded-2xl text-lg font-bold transition-all hover:scale-105 active:scale-95"
+          className="bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/20 py-7 px-10 rounded-3xl text-lg font-bold transition-all hover:scale-105 active:scale-95 group"
         >
-          + Create Task
+          <Plus className="mr-2 group-hover:rotate-90 transition-transform" />
+          New Mission
         </Button>
       </div>
 
-      <Card className="glass p-2 border-none inline-flex gap-1">
-        {['all', 'pending', 'in progress', 'completed'].map((status) => (
-          <button
-            key={status}
-            onClick={() => setFilter(status)}
-            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
-              filter === status
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-slate-500 hover:text-slate-800 hover:bg-white/50'
-            }`}
-          >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </button>
-        ))}
-      </Card>
+      <div className="flex flex-col md:flex-row gap-6 items-start">
+        {/* Filters */}
+        <Card className="glass p-2 border-none inline-flex flex-col md:flex-row gap-2">
+          {['all', 'pending', 'in progress', 'completed'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilter(status)}
+              className={`px-8 py-3.5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${
+                filter === status
+                  ? 'bg-white text-blue-600 shadow-md scale-105'
+                  : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'
+              }`}
+            >
+              {status}
+            </button>
+          ))}
+        </Card>
+      </div>
 
       {filteredTasks.length === 0 ? (
-        <Card className="glass p-20 text-center border-none">
-          <div className="max-w-xs mx-auto space-y-4">
-            <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-slate-400">
-              <Circle size={32} />
+        <Card className="glass p-32 text-center border-none">
+          <div className="max-w-md mx-auto space-y-6">
+            <div className="w-24 h-24 bg-slate-100 rounded-3xl flex items-center justify-center mx-auto text-slate-300 animate-float">
+              <Calendar size={48} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">No tasks found</h3>
-            <p className="text-slate-500">Time to add some goals and boost your productivity!</p>
-            <Button onClick={() => setLocation('/tasks/new')} variant="outline" className="mt-4">
-              Create your first task
+            <h3 className="text-3xl font-black text-slate-900">All Clear!</h3>
+            <p className="text-slate-500 text-lg">No tasks found for this filter. Time to dream big or enjoy the quiet.</p>
+            <Button onClick={() => setLocation('/tasks/new')} variant="outline" className="mt-8 py-6 px-10 rounded-2xl font-bold border-2">
+              Begin New Task
             </Button>
           </div>
         </Card>
       ) : (
-        <div className="grid gap-4">
-          {filteredTasks
-            .sort((a, b) => b.priorityScore - a.priorityScore)
-            .map((task) => (
+        <div className="grid gap-6">
+          {filteredTasks.map((task) => {
+            const p = getPriorityInfo(task.priorityScore);
+            return (
               <Card
                 key={task.id}
-                className={`glass card-hover p-6 border-none group relative overflow-hidden ${
-                  task.status === 'Completed' ? 'opacity-75' : ''
+                className={`glass p-8 border-none group relative overflow-hidden transition-all duration-500 hover:bg-white/90 ${
+                  task.status === 'Completed' ? 'opacity-60 grayscale-[0.5]' : ''
                 }`}
               >
+                {/* Priority Indicator Line */}
+                <div className={`absolute top-0 left-0 w-2 h-full bg-${p.color}-500`} />
+                
                 {task.priorityScore >= 95 && task.status !== 'Completed' && (
-                  <div className="absolute top-0 right-0 px-3 py-1 bg-rose-500 text-white text-[10px] font-bold uppercase tracking-widest rounded-bl-xl shadow-sm">
-                    High Priority
+                  <div className="absolute top-0 right-0 px-6 py-2 bg-rose-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-bl-3xl shadow-xl z-10 animate-pulse">
+                    Immediate Action
                   </div>
                 )}
                 
-                <div className="flex items-start gap-5">
+                <div className="flex flex-col md:flex-row items-start gap-8">
                   <button
                     onClick={() => handleToggleStatus(task)}
-                    className="mt-1 transition-transform hover:scale-110 active:scale-90"
+                    className="mt-2 transition-all hover:scale-125 active:scale-90"
                   >
                     {task.status === 'Completed' ? (
-                      <CheckCircle size={28} className="text-emerald-500 fill-emerald-50" />
+                      <CheckCircle size={40} className="text-emerald-500 fill-emerald-50" />
                     ) : (
-                      <Circle size={28} className="text-slate-300 hover:text-blue-500" />
+                      <div className="w-10 h-10 rounded-2xl border-4 border-slate-200 hover:border-blue-500 transition-colors" />
                     )}
                   </button>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2 flex-wrap">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-3">
                       <h3
-                        className={`text-xl font-bold tracking-tight truncate ${
+                        className={`text-2xl font-black tracking-tight truncate ${
                           task.status === 'Completed'
                             ? 'line-through text-slate-400'
                             : 'text-slate-900'
@@ -175,51 +184,54 @@ export default function Tasks() {
                       >
                         {task.title}
                       </h3>
-                      <span
-                        className={`text-xs font-black px-2.5 py-1 rounded-lg border ${getPriorityStyles(
-                          task.priorityScore
-                        )}`}
-                      >
-                        Score: {task.priorityScore.toFixed(0)}
-                      </span>
+                      <div className={`flex items-center gap-2 px-4 py-1.5 rounded-xl bg-${p.color}-50 text-${p.color}-600 border border-${p.color}-100`}>
+                        <p.icon size={14} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">
+                          {p.label} • {task.priorityScore.toFixed(0)}
+                        </span>
+                      </div>
                     </div>
                     
-                    <p className={`text-slate-500 line-clamp-2 mb-4 leading-relaxed ${task.status === 'Completed' ? 'line-through' : ''}`}>
-                      {task.description || 'No description provided.'}
+                    <p className={`text-slate-500 text-lg line-clamp-2 mb-6 leading-relaxed ${task.status === 'Completed' ? 'line-through' : ''}`}>
+                      {task.description || 'Elevate this task by adding a detailed description of your goals.'}
                     </p>
 
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    <div className="flex items-center gap-6 flex-wrap">
+                      <div className="flex items-center gap-2.5 px-5 py-2 bg-slate-100 text-slate-600 rounded-2xl text-xs font-black uppercase tracking-widest">
+                        <Tag size={14} />
                         {task.category}
                       </div>
-                      <div className={`flex items-center gap-1.5 text-xs font-medium ${task.isOverdue && task.status !== 'Completed' ? 'text-rose-600 font-bold' : 'text-slate-400'}`}>
-                        <Clock size={14} />
-                        {task.deadline ? new Date(task.deadline).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'No deadline'}
-                        {task.isOverdue && task.status !== 'Completed' && ' (Overdue)'}
+                      
+                      <div className={`flex items-center gap-2.5 text-sm font-bold ${task.isOverdue && task.status !== 'Completed' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        <Clock size={18} />
+                        {task.deadline ? new Date(task.deadline).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : 'No Deadline Set'}
+                        {task.isOverdue && task.status !== 'Completed' && (
+                          <span className="bg-rose-100 text-rose-600 px-3 py-1 rounded-lg text-[10px] uppercase font-black ml-2 shadow-sm">Overdue</span>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex flex-row md:flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
                     <button
                       onClick={() => setLocation(`/tasks/${task.id}/edit`)}
-                      className="p-3 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
-                      title="Edit Task"
+                      className="p-4 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-2xl transition-all shadow-sm"
+                      title="Edit Goal"
                     >
-                      <Edit2 size={20} />
+                      <Edit2 size={24} />
                     </button>
                     <button
                       onClick={() => handleDelete(task.id)}
-                      className="p-3 text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
-                      title="Delete Task"
+                      className="p-4 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-2xl transition-all shadow-sm"
+                      title="Delete Goal"
                     >
-                      <Trash2 size={20} />
+                      <Trash2 size={24} />
                     </button>
                   </div>
                 </div>
               </Card>
-            ))}
+            );
+          })}
         </div>
       )}
     </div>

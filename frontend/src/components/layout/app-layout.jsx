@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../store/authSlice.js';
 import { Button } from '../ui/button.jsx';
 import Sidebar from './sidebar.jsx';
+import { Search, Bell, LogOut, User as UserIcon } from 'lucide-react';
 
 export default function AppLayout({ children }) {
   const [, setLocation] = useLocation();
@@ -27,31 +28,52 @@ export default function AppLayout({ children }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 bg-transparent">
-        <header className="glass sticky top-0 z-30 px-8 py-5 flex items-center justify-between border-x-0 border-t-0">
-          <div>
-            <h1 className="text-2xl font-black tracking-tight">
-              <span className="text-gradient">TaskFlow</span>
-            </h1>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="hidden sm:flex flex-col items-end">
-              <span className="text-sm font-bold text-slate-900">{user?.name || 'User'}</span>
-              <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest">{user?.email}</span>
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="h-24 px-10 flex items-center justify-between border-b border-slate-200/60 bg-white/50 backdrop-blur-xl sticky top-0 z-30">
+          <div className="flex items-center flex-1 max-w-xl">
+            <div className="relative w-full group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+              <input 
+                type="text" 
+                placeholder="Search missions, categories, or insights..."
+                className="w-full pl-12 pr-6 py-3.5 bg-slate-100/50 border-none rounded-2xl focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-600 outline-none"
+              />
             </div>
-            <button 
-              onClick={handleLogout}
-              className="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-200"
-            >
-              Sign Out
-            </button>
+          </div>
+          
+          <div className="flex items-center gap-6 ml-10">
+            <div className="flex items-center gap-2">
+              <button className="p-3 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all relative">
+                <Bell size={20} />
+                <span className="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
+              </button>
+            </div>
+            
+            <div className="h-10 w-[1px] bg-slate-200 mx-2" />
+
+            <div className="flex items-center gap-4">
+              <div className="text-right hidden md:block">
+                <p className="text-sm font-black text-slate-900 leading-tight">{user?.name || 'User'}</p>
+                <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Premium Member</p>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center border border-white shadow-sm overflow-hidden group cursor-pointer hover:border-blue-200 transition-all">
+                <UserIcon className="text-slate-400 group-hover:text-blue-500 transition-colors" size={24} />
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="p-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all group"
+                title="Sign Out"
+              >
+                <LogOut size={20} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto custom-scrollbar">
-          <div className="max-w-7xl mx-auto p-8 lg:p-12">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-transparent">
+          <div className="max-w-7xl mx-auto p-10 lg:p-14">
             {children}
           </div>
         </main>
