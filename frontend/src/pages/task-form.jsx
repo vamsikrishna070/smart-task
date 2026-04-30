@@ -25,14 +25,14 @@ export default function TaskForm() {
 
   useEffect(() => {
     if (id && id !== 'new') {
-      const task = tasks.find((t) => t._id === id);
+      const task = tasks.find((t) => t.id === id);
       if (task) {
         setForm({
           title: task.title,
           description: task.description,
           category: task.category,
           status: task.status,
-          deadline: new Date(task.deadline).toISOString().split('T')[0],
+          deadline: task.deadline ? new Date(task.deadline).toISOString().split('T')[0] : '',
         });
       }
     }
@@ -113,64 +113,67 @@ export default function TaskForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto animate-in slide-up duration-500">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-slate-900">
-          {id && id !== 'new' ? 'Edit Task' : 'Create New Task'}
+        <h1 className="text-4xl font-extrabold tracking-tight">
+          <span className="text-gradient">
+            {id && id !== 'new' ? 'Edit Task' : 'Create New Task'}
+          </span>
         </h1>
-        <p className="text-slate-600 mt-2">
+        <p className="text-slate-500 font-medium mt-2">
           {id && id !== 'new'
-            ? 'Update your task details'
-            : 'Add a new task to your to-do list'}
+            ? 'Refine your task details for better clarity.'
+            : 'Define your next achievement and stay productive.'}
         </p>
       </div>
 
-      <Card className="p-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <Card className="glass p-8 border-none">
+        <form onSubmit={handleSubmit} className="space-y-8">
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+            <div className="p-4 bg-rose-50 border border-rose-100 text-rose-700 rounded-2xl text-sm font-medium animate-shake">
               {error}
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Title *
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
+              Title
             </label>
             <Input
               type="text"
               name="title"
               value={form.title}
               onChange={handleChange}
-              placeholder="Enter task title"
+              placeholder="What needs to be done?"
+              className="py-6 px-4 rounded-xl border-slate-200 focus:ring-blue-500 text-lg"
               required
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
               Description
             </label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
-              placeholder="Enter task description"
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Add more context to this task..."
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
               rows="4"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
                 Category
               </label>
               <select
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white font-medium"
               >
                 <option value="Work">Work</option>
                 <option value="Personal">Personal</option>
@@ -180,15 +183,15 @@ export default function TaskForm() {
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
                 Status
               </label>
               <select
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white font-medium"
               >
                 <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
@@ -197,23 +200,24 @@ export default function TaskForm() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Deadline *
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
+              Deadline
             </label>
             <Input
               type="date"
               name="deadline"
               value={form.deadline}
               onChange={handleChange}
+              className="py-6 px-4 rounded-xl border-slate-200 focus:ring-blue-500"
               required
             />
           </div>
 
-          <div className="flex gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <Button
               type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 py-7 rounded-2xl text-lg font-bold shadow-lg shadow-blue-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
               disabled={loading}
             >
               {loading
@@ -226,8 +230,8 @@ export default function TaskForm() {
             </Button>
             <Button
               type="button"
-              onClick={() => navigate('/tasks')}
-              className="flex-1 bg-slate-200 text-slate-900 hover:bg-slate-300"
+              onClick={() => setLocation('/tasks')}
+              className="flex-1 bg-slate-100 text-slate-600 hover:bg-slate-200 py-7 rounded-2xl text-lg font-bold transition-all"
             >
               Cancel
             </Button>

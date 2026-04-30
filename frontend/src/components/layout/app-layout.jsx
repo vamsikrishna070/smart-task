@@ -27,26 +27,34 @@ export default function AppLayout({ children }) {
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="bg-white border-b border-border px-6 py-4 flex items-center justify-between">
+      <div className="flex-1 flex flex-col min-w-0 bg-transparent">
+        <header className="glass sticky top-0 z-30 px-8 py-5 flex items-center justify-between border-x-0 border-t-0">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">TaskFlow</h1>
+            <h1 className="text-2xl font-black tracking-tight">
+              <span className="text-gradient">TaskFlow</span>
+            </h1>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user?.email}</span>
-            <Button variant="outline" onClick={handleLogout}>
-              Logout
-            </Button>
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex flex-col items-end">
+              <span className="text-sm font-bold text-slate-900">{user?.name || 'User'}</span>
+              <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest">{user?.email}</span>
+            </div>
+            <button 
+              onClick={handleLogout}
+              className="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-200"
+            >
+              Sign Out
+            </button>
           </div>
-        </div>
+        </header>
 
-        <div className="flex-1 overflow-auto">
-          <div className="p-6">
+        <main className="flex-1 overflow-auto custom-scrollbar">
+          <div className="max-w-7xl mx-auto p-8 lg:p-12">
             {children}
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

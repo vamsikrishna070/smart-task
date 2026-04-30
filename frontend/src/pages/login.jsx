@@ -42,34 +42,41 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Card className="w-full max-w-md shadow-lg">
-        <div className="p-8">
-          <h1 className="text-3xl font-bold text-center mb-2 text-slate-900">TaskFlow</h1>
-          <p className="text-center text-slate-500 mb-8">Welcome Back</p>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_50%,rgba(37,99,235,0.1),transparent_50%)]" />
+      
+      <Card className="glass w-full max-w-md border-none overflow-hidden relative z-10 animate-in zoom-in duration-500">
+        <div className="p-10">
+          <div className="mb-10 text-center">
+            <h1 className="text-4xl font-black tracking-tight mb-2">
+              <span className="text-gradient">TaskFlow</span>
+            </h1>
+            <p className="text-slate-500 font-medium">Elevate your productivity today</p>
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+              <div className="p-4 bg-rose-50 border border-rose-100 text-rose-700 rounded-2xl text-sm font-medium animate-shake">
                 {error}
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Email
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
+                Email Address
               </label>
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="name@company.com"
+                className="py-6 px-4 rounded-xl border-slate-200 focus:ring-blue-500/20"
                 required
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider ml-1">
                 Password
               </label>
               <Input
@@ -77,24 +84,28 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
+                className="py-6 px-4 rounded-xl border-slate-200 focus:ring-blue-500/20"
                 required
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-blue-600 hover:bg-blue-700 py-7 rounded-2xl text-lg font-bold shadow-lg shadow-blue-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
               disabled={loading}
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Authenticating...' : 'Sign In'}
             </Button>
           </form>
 
-          <p className="text-center text-sm text-slate-600 mt-6">
-            Don't have an account?{' '}
-            <a href="/register" className="text-blue-600 hover:underline font-medium">
-              Register
-            </a>
+          <p className="text-center text-sm text-slate-500 mt-8 font-medium">
+            New to TaskFlow?{' '}
+            <button 
+              onClick={() => setLocation('/register')}
+              className="text-blue-600 hover:text-blue-700 font-bold ml-1 transition-colors"
+            >
+              Create an account
+            </button>
           </p>
         </div>
       </Card>

@@ -16,8 +16,7 @@ export default function Tasks() {
 
   useEffect(() => {
     fetchTasks();
-    const interval = setInterval(fetchTasks, 2000);
-    return () => clearInterval(interval);
+    // No polling interval needed thanks to Socket.io
   }, []);
 
   const fetchTasks = async () => {
@@ -53,7 +52,7 @@ export default function Tasks() {
   const handleToggleStatus = async (task) => {
     const newStatus = task.status === 'Completed' ? 'Pending' : 'Completed';
     try {
-      const response = await fetch(`/api/tasks/${task._id}`, {
+      const response = await fetch(`/api/tasks/${task.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -75,125 +74,147 @@ export default function Tasks() {
       ? tasks
       : tasks.filter((task) => task.status.toLowerCase() === filter.toLowerCase());
 
-  const getPriorityColor = (priority) => {
-    if (priority >= 95) return 'bg-red-100 text-red-800 border-red-300';
-    if (priority >= 85) return 'bg-orange-100 text-orange-800 border-orange-300';
-    if (priority >= 70) return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-    return 'bg-green-100 text-green-800 border-green-300';
+  const getPriorityStyles = (priority) => {
+    if (priority >= 95) return 'bg-rose-50 text-rose-700 border-rose-200';
+    if (priority >= 85) return 'bg-orange-50 text-orange-700 border-orange-200';
+    if (priority >= 70) return 'bg-amber-50 text-amber-700 border-amber-200';
+    return 'bg-emerald-50 text-emerald-700 border-emerald-200';
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-[60vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900">Tasks</h1>
-          <p className="text-slate-600">Manage your to-do list</p>
+          <h1 className="text-4xl font-extrabold tracking-tight">
+            <span className="text-gradient">Tasks</span>
+          </h1>
+          <p className="text-slate-500 font-medium">Manage and prioritize your workflow</p>
         </div>
         <Button
           onClick={() => setLocation('/tasks/new')}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 py-6 px-8 rounded-2xl text-lg font-bold transition-all hover:scale-105 active:scale-95"
         >
-          Create Task
+          + Create Task
         </Button>
       </div>
 
-      <Card className="p-4">
-        <div className="flex gap-2 flex-wrap">
-          {['all', 'pending', 'in progress', 'completed'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === status
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </button>
-          ))}
-        </div>
+      <Card className="glass p-2 border-none inline-flex gap-1">
+        {['all', 'pending', 'in progress', 'completed'].map((status) => (
+          <button
+            key={status}
+            onClick={() => setFilter(status)}
+            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+              filter === status
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-slate-500 hover:text-slate-800 hover:bg-white/50'
+            }`}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </button>
+        ))}
       </Card>
 
       {filteredTasks.length === 0 ? (
-        <Card className="p-12 text-center">
-          <p className="text-slate-600">No tasks found. Create one to get started!</p>
+        <Card className="glass p-20 text-center border-none">
+          <div className="max-w-xs mx-auto space-y-4">
+            <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-slate-400">
+              <Circle size={32} />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">No tasks found</h3>
+            <p className="text-slate-500">Time to add some goals and boost your productivity!</p>
+            <Button onClick={() => setLocation('/tasks/new')} variant="outline" className="mt-4">
+              Create your first task
+            </Button>
+          </div>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div className="grid gap-4">
           {filteredTasks
             .sort((a, b) => b.priorityScore - a.priorityScore)
             .map((task) => (
               <Card
-                key={task._id}
-                className={`p-4 border-l-4 ${
-                  task.status === 'Completed'
-                    ? 'border-l-green-500 bg-slate-50'
-                    : 'border-l-blue-500'
+                key={task.id}
+                className={`glass card-hover p-6 border-none group relative overflow-hidden ${
+                  task.status === 'Completed' ? 'opacity-75' : ''
                 }`}
               >
-                <div className="flex items-start gap-4">
+                {task.priorityScore >= 95 && task.status !== 'Completed' && (
+                  <div className="absolute top-0 right-0 px-3 py-1 bg-rose-500 text-white text-[10px] font-bold uppercase tracking-widest rounded-bl-xl shadow-sm">
+                    High Priority
+                  </div>
+                )}
+                
+                <div className="flex items-start gap-5">
                   <button
                     onClick={() => handleToggleStatus(task)}
-                    className="mt-1 text-slate-400 hover:text-blue-600 transition"
+                    className="mt-1 transition-transform hover:scale-110 active:scale-90"
                   >
                     {task.status === 'Completed' ? (
-                      <CheckCircle size={20} className="text-green-600" />
+                      <CheckCircle size={28} className="text-emerald-500 fill-emerald-50" />
                     ) : (
-                      <Circle size={20} />
+                      <Circle size={28} className="text-slate-300 hover:text-blue-500" />
                     )}
                   </button>
 
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-2 flex-wrap">
                       <h3
-                        className={`text-lg font-semibold ${
+                        className={`text-xl font-bold tracking-tight truncate ${
                           task.status === 'Completed'
-                            ? 'line-through text-slate-500'
+                            ? 'line-through text-slate-400'
                             : 'text-slate-900'
                         }`}
                       >
                         {task.title}
                       </h3>
                       <span
-                        className={`text-xs font-bold px-2 py-1 rounded border ${getPriorityColor(
+                        className={`text-xs font-black px-2.5 py-1 rounded-lg border ${getPriorityStyles(
                           task.priorityScore
                         )}`}
                       >
-                        {task.priorityScore.toFixed(0)}
+                        Score: {task.priorityScore.toFixed(0)}
                       </span>
                     </div>
-                    <p className="text-slate-600 text-sm mb-2">{task.description}</p>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <span className="text-xs bg-slate-200 text-slate-700 px-2 py-1 rounded">
+                    
+                    <p className={`text-slate-500 line-clamp-2 mb-4 leading-relaxed ${task.status === 'Completed' ? 'line-through' : ''}`}>
+                      {task.description || 'No description provided.'}
+                    </p>
+
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                         {task.category}
-                      </span>
-                      <span className="text-xs text-slate-500">
-                        Deadline: {new Date(task.deadline).toLocaleDateString()}
-                      </span>
+                      </div>
+                      <div className={`flex items-center gap-1.5 text-xs font-medium ${task.isOverdue && task.status !== 'Completed' ? 'text-rose-600 font-bold' : 'text-slate-400'}`}>
+                        <Clock size={14} />
+                        {task.deadline ? new Date(task.deadline).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'No deadline'}
+                        {task.isOverdue && task.status !== 'Completed' && ' (Overdue)'}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
-                      onClick={() => setLocation(`/tasks/${task._id}/edit`)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                      onClick={() => setLocation(`/tasks/${task.id}/edit`)}
+                      className="p-3 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                      title="Edit Task"
                     >
-                      <Edit2 size={18} />
+                      <Edit2 size={20} />
                     </button>
                     <button
-                      onClick={() => handleDelete(task._id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                      onClick={() => handleDelete(task.id)}
+                      className="p-3 text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+                      title="Delete Task"
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={20} />
                     </button>
                   </div>
                 </div>
