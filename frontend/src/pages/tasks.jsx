@@ -93,38 +93,39 @@ export default function Tasks() {
   }
 
   return (
-    <div className="space-y-12 pb-12">
+    <div className="space-y-6 md:space-y-12 pb-12">
       {/* Dynamic Header Section */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 animate-enter">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-8 animate-enter">
         <div className="space-y-2">
-          <div className="px-3 py-1 bg-slate-900 text-white inline-block rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+          <div className="px-3 py-1 bg-slate-900 text-white inline-block rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-2">
             Operations
           </div>
-          <h1 className="text-6xl font-black tracking-tight text-slate-900 leading-none">
+          <h1 className="text-3xl md:text-4xl lg:text-6xl font-black tracking-tight text-slate-900 leading-none">
             Strategic <br/>
             <span className="text-blue-600">Workflow.</span>
           </h1>
-          <p className="text-lg text-slate-500 font-medium">Manage your execution with high-fidelity tracking.</p>
+          <p className="text-sm md:text-base lg:text-lg text-slate-500 font-medium">Manage your execution with high-fidelity tracking.</p>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
            <Button
             onClick={() => setLocation('/tasks/new')}
-            className="bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/20 py-8 px-12 rounded-[2rem] text-xl font-black transition-all hover:scale-[1.02] active:scale-[0.98] group flex items-center gap-3"
+            className="bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/20 py-3 md:py-8 px-6 md:px-12 rounded-[1.5rem] md:rounded-[2rem] text-sm md:text-xl font-black transition-all hover:scale-[1.02] active:scale-[0.98] group flex items-center gap-2 md:gap-3"
           >
-            <Plus size={24} className="group-hover:rotate-90 transition-transform duration-500" />
-            New Mission
+            <Plus size={18} className="md:w-6 md:h-6 group-hover:rotate-90 transition-transform duration-500" />
+            <span className="hidden sm:inline">New Mission</span>
+            <span className="sm:hidden">New</span>
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 items-center animate-enter stagger-1">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-center animate-enter stagger-1 overflow-x-auto">
         <Card className="glass p-2 border-none inline-flex flex-wrap gap-2 rounded-3xl">
           {['all', 'pending', 'in progress', 'completed'].map((status) => (
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${
+              className={`px-4 md:px-8 py-2 md:py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${
                 filter === status
                   ? 'bg-slate-900 text-white shadow-xl scale-105'
                   : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'
@@ -135,24 +136,24 @@ export default function Tasks() {
           ))}
         </Card>
         
-        <div className="h-6 w-[1px] bg-slate-200 hidden md:block" />
+        <div className="h-6 w-px bg-slate-200 hidden md:block" />
         
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-           Showing <span className="text-slate-900">{filteredTasks.length} missions</span>
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+           Showing <span className="text-slate-900">{filteredTasks.length}</span>
         </p>
       </div>
 
       {filteredTasks.length === 0 ? (
-        <Card className="glass p-32 text-center border-none rounded-[3rem] animate-enter stagger-2">
-          <div className="max-w-md mx-auto space-y-8">
-            <div className="w-28 h-28 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto text-slate-200 animate-float border border-slate-100">
-              <Calendar size={56} />
+        <Card className="glass p-8 md:p-20 lg:p-32 text-center border-none rounded-[2rem] md:rounded-[3rem] animate-enter stagger-2">
+          <div className="max-w-md mx-auto space-y-6 md:space-y-8">
+            <div className="w-20 md:w-28 h-20 md:h-28 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto text-slate-200 animate-float border border-slate-100">
+              <Calendar size={40} className="md:w-14 md:h-14" />
             </div>
             <div>
-              <h3 className="text-3xl font-black text-slate-900 mb-2">Workspace Clear</h3>
-              <p className="text-slate-500 text-lg font-medium leading-relaxed">No tasks matching this protocol. Deploy a new mission to begin tracking.</p>
+              <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-2">Workspace Clear</h3>
+              <p className="text-slate-500 text-sm md:text-lg font-medium leading-relaxed">No tasks matching this protocol. Deploy a new mission to begin tracking.</p>
             </div>
-            <Button onClick={() => setLocation('/tasks/new')} variant="outline" className="py-7 px-12 rounded-2xl font-black uppercase tracking-widest border-2 hover:bg-slate-50">
+            <Button onClick={() => setLocation('/tasks/new')} variant="outline" className="py-3 md:py-7 px-8 md:px-12 rounded-2xl font-black text-sm md:text-base uppercase tracking-widest border-2 hover:bg-slate-50">
               Initialize Mission
             </Button>
           </div>
@@ -180,23 +181,23 @@ export default function Tasks() {
                 <div className="flex flex-col lg:flex-row items-start gap-10 relative z-10">
                   <button
                     onClick={() => handleToggleStatus(task)}
-                    className="mt-1 transition-all hover:scale-110 active:scale-90 group/check flex-shrink-0"
+                    className="mt-1 transition-all hover:scale-110 active:scale-90 group/check shrink-0"
                   >
                     {task.status === 'Completed' ? (
-                      <div className="w-14 h-14 rounded-3xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-                        <CheckCircle size={32} />
+                      <div className="w-10 md:w-14 h-10 md:h-14 rounded-3xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                        <CheckCircle size={24} className="md:w-8 md:h-8" />
                       </div>
                     ) : (
-                      <div className="w-14 h-14 rounded-3xl border-4 border-slate-100 bg-white hover:border-blue-500 transition-all shadow-sm group-hover/check:shadow-md flex items-center justify-center">
-                        <Circle size={32} className="text-slate-100 group-hover/check:text-blue-100 transition-colors" />
+                      <div className="w-10 md:w-14 h-10 md:h-14 rounded-3xl border-4 border-slate-100 bg-white hover:border-blue-500 transition-all shadow-sm group-hover/check:shadow-md flex items-center justify-center">
+                        <Circle size={24} className="md:w-8 md:h-8 text-slate-100 group-hover/check:text-blue-100 transition-colors" />
                       </div>
                     )}
                   </button>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 md:gap-4 mb-3 md:mb-4">
                       <h3
-                        className={`text-3xl font-black tracking-tight truncate leading-tight ${
+                        className={`text-lg md:text-2xl lg:text-3xl font-black tracking-tight truncate leading-tight ${
                           task.status === 'Completed'
                             ? 'line-through text-slate-400'
                             : 'text-slate-900'
@@ -204,48 +205,48 @@ export default function Tasks() {
                       >
                         {task.title}
                       </h3>
-                      <div className={`flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-${p.color}-50 text-${p.color}-600 border border-${p.color}-100/50 shadow-sm`}>
-                        <p.icon size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-widest">
+                      <div className={`flex items-center gap-2.5 px-3 md:px-4 py-1.5 md:py-2 rounded-2xl bg-${p.color}-50 text-${p.color}-600 border border-${p.color}-100/50 shadow-sm whitespace-nowrap`}>
+                        <p.icon size={12} className="md:w-4 md:h-4" />
+                        <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest">
                           {p.label} • {task.priorityScore.toFixed(0)}
                         </span>
                       </div>
                     </div>
                     
-                    <p className={`text-slate-500 text-xl font-medium line-clamp-2 mb-8 leading-relaxed max-w-4xl ${task.status === 'Completed' ? 'line-through opacity-60' : ''}`}>
+                    <p className={`text-slate-500 text-sm md:text-lg lg:text-xl font-medium line-clamp-2 mb-4 md:mb-8 leading-relaxed max-w-4xl ${task.status === 'Completed' ? 'line-through opacity-60' : ''}`}>
                       {task.description || 'No strategic overview provided for this mission objective.'}
                     </p>
 
-                    <div className="flex items-center gap-8 flex-wrap">
-                      <div className="flex items-center gap-3 px-6 py-2.5 bg-slate-50 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border border-slate-100/50">
-                        <Tag size={14} />
-                        {task.category}
+                    <div className="flex items-center gap-3 md:gap-8 flex-wrap">
+                      <div className="flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-2.5 bg-slate-50 text-slate-600 rounded-2xl text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] border border-slate-100/50 whitespace-nowrap">
+                        <Tag size={12} className="md:w-4 md:h-4" />
+                        <span className="truncate">{task.category}</span>
                       </div>
                       
-                      <div className={`flex items-center gap-3 text-sm font-black uppercase tracking-widest ${task.isOverdue && task.status !== 'Completed' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        <Calendar size={18} />
-                        {task.deadline ? new Date(task.deadline).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Open Schedule'}
+                      <div className={`flex items-center gap-2 md:gap-3 text-xs md:text-sm font-black uppercase tracking-widest ${task.isOverdue && task.status !== 'Completed' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        <Calendar size={14} className="md:w-5 md:h-5" />
+                        <span className="truncate">{task.deadline ? new Date(task.deadline).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Open'}</span>
                         {task.isOverdue && task.status !== 'Completed' && (
-                          <span className="bg-rose-600 text-white px-4 py-1.5 rounded-full text-[9px] font-black ml-3 shadow-lg shadow-rose-600/20">Overdue</span>
+                          <span className="bg-rose-600 text-white px-2 md:px-4 py-1 md:py-1.5 rounded-full text-[7px] md:text-[9px] font-black shadow-lg shadow-rose-600/20 whitespace-nowrap">Overdue</span>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-row lg:flex-col gap-3 opacity-0 lg:group-hover:opacity-100 transition-all duration-500 transform lg:translate-x-6 lg:group-hover:translate-x-0">
+                  <div className="flex flex-row lg:flex-col gap-2 md:gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-500 transform lg:translate-x-6 lg:group-hover:translate-x-0 shrink-0">
                     <button
                       onClick={() => setLocation(`/tasks/${task.id}/edit`)}
-                      className="p-5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-[1.5rem] transition-all shadow-sm hover:shadow-blue-500/20 active:scale-95"
+                      className="p-3 md:p-5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl md:rounded-2xl transition-all shadow-sm hover:shadow-blue-500/20 active:scale-95"
                       title="Refine Objective"
                     >
-                      <Edit2 size={26} />
+                      <Edit2 size={18} className="md:w-7 md:h-7" />
                     </button>
                     <button
                       onClick={() => handleDelete(task.id)}
-                      className="p-5 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-[1.5rem] transition-all shadow-sm hover:shadow-rose-500/20 active:scale-95"
+                      className="p-3 md:p-5 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded-xl md:rounded-2xl transition-all shadow-sm hover:shadow-rose-500/20 active:scale-95"
                       title="Terminate Mission"
                     >
-                      <Trash2 size={26} />
+                      <Trash2 size={18} className="md:w-7 md:h-7" />
                     </button>
                   </div>
                 </div>

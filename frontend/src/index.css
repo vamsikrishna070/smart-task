@@ -14,11 +14,39 @@
 @layer base {
   body {
     @apply bg-[#fafafa] text-slate-900 antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    background-image: 
-      radial-gradient(at 0% 0%, hsla(217,100%,97%,0.5) 0, transparent 50%), 
-      radial-gradient(at 100% 100%, hsla(222,100%,98%,0.5) 0, transparent 50%);
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+    background-image:
+      radial-gradient(at 0% 0%, hsla(217, 100%, 97%, 0.5) 0, transparent 50%),
+      radial-gradient(
+        at 100% 100%,
+        hsla(222, 100%, 98%, 0.5) 0,
+        transparent 50%
+      );
     min-height: 100vh;
+    /* Improve touch interactions on mobile */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Ensure inputs are readable on mobile */
+  input,
+  button,
+  select,
+  textarea {
+    -webkit-user-select: text;
+    user-select: text;
+    /* Prevent iOS zoom on input focus */
+    font-size: 16px;
+  }
+
+  /* Improve mobile button targets (min 44x44px) */
+  button,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
@@ -33,14 +61,15 @@
 
 /* Dynamic Gradients */
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-br from-slate-900 via-blue-800 to-indigo-900;
+  @apply bg-clip-text text-transparent bg-linear-to-br from-slate-900 via-blue-800 to-indigo-900;
 }
 
 .bg-mesh {
   background-color: #ffffff;
-  background-image: radial-gradient(at 40% 20%, hsla(222,100%,98%,1) 0, transparent 50%), 
-                    radial-gradient(at 80% 0%, hsla(217,100%,97%,1) 0, transparent 50%), 
-                    radial-gradient(at 0% 50%, hsla(210,100%,96%,1) 0, transparent 50%);
+  background-image:
+    radial-gradient(at 40% 20%, hsla(222, 100%, 98%, 1) 0, transparent 50%),
+    radial-gradient(at 80% 0%, hsla(217, 100%, 97%, 1) 0, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(210, 100%, 96%, 1) 0, transparent 50%);
 }
 
 /* Animations & Micro-interactions */
@@ -48,19 +77,85 @@
   animation: enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes enter {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
-.stagger-1 { animation-delay: 0.1s; }
-.stagger-2 { animation-delay: 0.2s; }
-.stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Better focus states for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  @apply outline-2 outline-offset-2 outline-blue-500;
+}
+
+/* Mobile-friendly form inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+  @apply text-base; /* Prevent iOS zoom */
+}
+
+/* Prevent text selection on long press for desktop, but allow on inputs */
+.no-select {
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+.stagger-4 {
+  animation-delay: 0.4s;
+}
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .animate-float {
