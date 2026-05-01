@@ -112,7 +112,7 @@ export default function Register() {
         </div>
 
         {/* Right Side: Auth Form */}
-        <div className="w-full max-w-[480px] mx-auto">
+        <div className="w-full max-w-120 mx-auto">
           <Card className="bg-white border border-slate-200/60 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] rounded-[2.5rem] overflow-hidden">
             <div className="p-12 sm:p-16">
               <div className="mb-10">
@@ -207,7 +207,7 @@ export default function Register() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-7 rounded-2xl text-lg font-bold shadow-xl shadow-blue-500/20 transition-all hover:translate-y-[-2px] active:translate-y-[0px] mt-4 flex items-center justify-center gap-2"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-7 rounded-2xl text-lg font-bold shadow-xl shadow-blue-500/20 transition-all hover:-translate-y-0.5 active:translate-y-0 mt-4 flex items-center justify-center gap-2"
                   disabled={loading}
                 >
                   {loading ? 'Creating Account...' : (

@@ -92,7 +92,7 @@ export default function Login() {
         </div>
 
         {/* Right Side: Auth Form */}
-        <div className="w-full max-w-[480px] mx-auto">
+        <div className="w-full max-w-120 mx-auto">
           <Card className="bg-white border border-slate-200/60 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] rounded-[2.5rem] overflow-hidden">
             <div className="p-12 sm:p-16">
               <div className="mb-10">
@@ -114,8 +114,9 @@ export default function Login() {
                   </label>
                   <Input
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
                     placeholder="alex@example.com"
                     className="py-6 px-6 rounded-2xl border-slate-200 bg-slate-50/30 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all text-base font-medium placeholder:text-slate-300"
                     required
@@ -129,8 +130,9 @@ export default function Login() {
                   <div className="relative group">
                     <Input
                       type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      name="password"
+                      value={form.password}
+                      onChange={handleChange}
                       placeholder="••••••••••••"
                       className="py-6 px-6 rounded-2xl border-slate-200 bg-slate-50/30 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all text-base font-medium placeholder:text-slate-300 pr-14"
                       required
@@ -157,7 +159,7 @@ export default function Login() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-7 rounded-2xl text-lg font-bold shadow-xl shadow-blue-500/20 transition-all hover:translate-y-[-2px] active:translate-y-[0px] mt-4 flex items-center justify-center gap-2"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-7 rounded-2xl text-lg font-bold shadow-xl shadow-blue-500/20 transition-all hover:-translate-y-0.5 active:translate-y-0 mt-4 flex items-center justify-center gap-2"
                   disabled={loading}
                 >
                   {loading ? 'Authenticating...' : (
